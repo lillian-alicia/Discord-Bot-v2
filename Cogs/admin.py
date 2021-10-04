@@ -23,7 +23,7 @@ class Admin(commands.Cog):
         invite_link = 'https://discord.com/api/oauth2/authorize?client_id=811660589037650000&permissions=926940919&scope=bot'
         await ctx.send(f'Invite me using: {invite_link}')
 
-@commands.Cog.listener()
+#@commands.Cog.listener()
 #async def on_reaction_add(self, ctx, reaction, user):
 #    print (reaction.emoji)
 #    await bot.pin_message(reaction.message)

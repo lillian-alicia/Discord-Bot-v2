@@ -15,7 +15,6 @@ def get_prefix(client, message): # Per server prefixes
         prefixes = json.load(prefix_file)
     return prefixes[str(message.guild.id)]
 
-
 def random_status():
         for line in open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/random_status.txt', 'r').readlines():
             status_options = []
@@ -25,8 +24,9 @@ def random_status():
 
 bot = commands.Bot(command_prefix = get_prefix) #create bot
 nest_asyncio.apply() # Prevents program not starting due to asyncio
-# bot.load_extension('Cogs.greetings')# Put the cog name here
-# bot.load_extension('Cogs.eightball')
+bot.load_extension('Cogs.admin')# Put the cog name here
+bot.load_extension('Cogs.utility')
+bot.load_extension('Cogs.fun')
 
 @bot.event
 async def on_ready():
@@ -57,20 +57,5 @@ async def on_guild_remove(guild):
 
     with open ('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'w') as prefix_file:
         json.dump(prefixes, prefix_file, indent=4)
-
-@bot.command
-async def ping(ctx):
-    bot_ping = (str(round(bot.latency * 1000)) + str(' ms'))
-    await ctx.send(bot_ping)
-
-@bot.command()
-async def change_prefix(ctx, custom_prefix):
-     with open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'r') as prefix_file:
-         prefixes = json.load(prefix_file) # Save the custom prefix to the .json file
-     prefixes[str(ctx.guild.id)] = custom_prefix
-
-     with open ('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'w') as prefix_file:
-         json.dump(prefixes, prefix_file, indent=4)
-
 
 bot.run(lc.getline('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/token', 1))
