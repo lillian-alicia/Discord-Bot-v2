@@ -1,0 +1,21 @@
+{"melee": 
+    {
+        "short sword" : "1d6",
+        "long sword" : "",
+        "halbard" : "",
+        "glave" : "",
+        "dagger" : "1d4",
+        "mace" : "1d6"
+    },
+
+"ranged" : {
+    "hand crossbow" : "",
+    "dagger" : "1d4"
+    },
+
+"magic" : 
+{
+    "eldritch blast" : "1d10"
+}
+
+}
