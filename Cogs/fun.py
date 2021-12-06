@@ -1,11 +1,11 @@
 import discord, random
 from discord.ext import commands
 
-class Fun(commands.Cog):
+class Fun(commands.Cog): # Setup bot
     def __init__ (self, bot):
         self.bot = bot
     
-    @commands.command()
+    @commands.command() # Random.randint (possibly broken)
     async def random(self, ctx, mode, *, params):
         if mode == 'number':
             params_split = params.split()
