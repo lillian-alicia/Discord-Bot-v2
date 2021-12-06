@@ -2,11 +2,11 @@ import discord
 from discord.ext import commands
 import json
 
-class Admin(commands.Cog):
+class Admin(commands.Cog): # Setup bot
     def __init__ (self, bot):
         self.bot = bot
     
-    @commands.command()
+    @commands.command() # Change custom prefix
     async def change_prefix(self, ctx, custom_prefix):
         with open('Media/prefixes.json', 'r') as prefix_file:
             prefixes = json.load(prefix_file) # Save the custom prefix to the .json file
@@ -23,7 +23,7 @@ class Admin(commands.Cog):
         invite_link = 'https://discord.com/api/oauth2/authorize?client_id=811660589037650000&permissions=926940919&scope=bot'
         await ctx.send(f'Invite me using: {invite_link}')
 
-#@commands.Cog.listener()
+#@commands.Cog.listener() '''  Auto-pin message, currently broken '''
 #async def on_reaction_add(self, ctx, reaction, user):
 #    print (reaction.emoji)
 #    await bot.pin_message(reaction.message)

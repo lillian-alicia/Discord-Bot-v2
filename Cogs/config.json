@@ -1,0 +1,10 @@
+{
+    "owner" : {
+        "username" : "Gaben",
+        "discriminator" : "9860"
+    },
+
+    "cogs" : ["admin", "fun", "utility"]
+
+
+}
