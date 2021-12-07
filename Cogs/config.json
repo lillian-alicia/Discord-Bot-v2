@@ -4,7 +4,9 @@
         "discriminator" : "9860"
     },
 
-    "cogs" : ["admin", "fun", "utility"]
+    "cogs" : ["admin", "fun", "utility"],
+
+    "token" : ""
 
 
 }

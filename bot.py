@@ -106,5 +106,9 @@ async def reload (ctx):
     else:
         print('Only the owner can use this command. If you are the owner, edit the values in config.json')
 
+if str(config['token']) == '':
+    token = lc.getline('Media/token', 1)
+else:
+    token = str(config['token'])
 
-bot.run(lc.getline('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/token', 1))
+bot.run(token)
