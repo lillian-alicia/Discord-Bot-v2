@@ -8,17 +8,16 @@ on:
 name: Create Release
 
 jobs:
-  build:
-  steps:
-  - name: Read package.json
-    id: package
-    uses: juliangruber/read-file-action@v1
-    with:
-      path: ./.github/changes.txt
-    name: Create Release
-    runs-on: ubuntu-latest
+  get-changes:
     steps:
-        - name: Checkout code
+    - name: Read package.json
+      id: package
+      uses: juliangruber/read-file-action@v1
+      with:
+        path: ./.github/changes.txt
+  release:
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v2
       - name: Create Release
         id: create_release
