@@ -8,14 +8,9 @@ on:
 name: Create Release
 
 jobs:
-  get-changes:
-    steps:
-    - name: Read package.json
-      id: package
-      uses: juliangruber/read-file-action@v1
-      with:
-        path: ./.github/changes.txt
-  release:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -28,8 +23,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: |
-            Changes in this Release:
-            ${{  steps.package.outputs.content }}
+            Changes in this Release
+            - First Change
+            - Second Change
           draft: false
-          prerelease: false
-
