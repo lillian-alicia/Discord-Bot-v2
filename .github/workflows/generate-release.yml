@@ -9,17 +9,15 @@ name: Create Release
 
 jobs:
   build:
-    name: Create Release
-    runs-on: ubuntu-latest
-    steps:
   - name: Read package.json
     id: package
     uses: juliangruber/read-file-action@v1
     with:
       path: ./.github/changes.txt
-
-
-      - name: Checkout code
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout code
         uses: actions/checkout@v2
       - name: Create Release
         id: create_release
