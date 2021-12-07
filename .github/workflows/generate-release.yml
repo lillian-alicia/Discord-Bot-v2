@@ -12,7 +12,7 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: Read package.json
+  - name: Read package.json
     id: package
     uses: juliangruber/read-file-action@v1
     with:
