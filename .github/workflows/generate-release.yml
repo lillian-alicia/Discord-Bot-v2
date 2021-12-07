@@ -9,6 +9,7 @@ name: Create Release
 
 jobs:
   build:
+  steps:
   - name: Read package.json
     id: package
     uses: juliangruber/read-file-action@v1
