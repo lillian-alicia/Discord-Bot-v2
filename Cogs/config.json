@@ -6,7 +6,9 @@
 
     "cogs" : ["admin", "fun", "utility"],
 
-    "token" : ""
+    "token" : "",
+    
+    "permissions" : "532643970112"
 
 
 }
