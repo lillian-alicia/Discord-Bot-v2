@@ -5,6 +5,8 @@ import json
 class Admin(commands.Cog): # Setup bot
     def __init__ (self, bot):
         self.bot = bot
+        
+        config = json.load(open('Cogs/config.json', 'r')
     
     @commands.command() # Change custom prefix
     async def change_prefix(self, ctx, custom_prefix):
@@ -20,7 +22,8 @@ class Admin(commands.Cog): # Setup bot
     
     @commands.command()
     async def invite (self, ctx):
-        invite_link = 'https://discord.com/api/oauth2/authorize?client_id=811660589037650000&permissions=926940919&scope=bot'
+        permissions_int = str(config['permissions'])
+        invite_link = 'https://discord.com/api/oauth2/authorize?client_id=811660589037650000&permissions={premissions_int}&scope=bot'
         await ctx.send(f'Invite me using: {invite_link}')
 
 #@commands.Cog.listener() '''  Auto-pin message, currently broken '''
