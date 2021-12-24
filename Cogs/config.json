@@ -1,12 +1,16 @@
 {
     "owner" : {
         "username" : "Gaben",
-        "discriminator" : "9860"
+        "discriminator" : "9860",
+
+        "comment" : "Put your username and tag above."
     },
 
     "cogs" : ["admin", "fun", "utility"],
 
-    "token" : ""
+    "token" : "",
+
+    "comment" : "Put your token and cogs to load above."
 
 
 }

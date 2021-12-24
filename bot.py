@@ -1,25 +1,33 @@
-import discord, nest_asyncio, requests
+from json.decoder import JSONDecodeError
+import discord, nest_asyncio, requests #FIXME: Add improved error handling
 from discord.ext import commands, tasks
 import linecache as lc
-import os, json, random
+import os, json, random # Is os module required?
+import logging #TODO: Add command logging (user, channel, server, time)
 
-config = json.load(open('Cogs/config.json', 'r'))
+try:
+    config = json.load(open('Cogs/config.json', 'r'))
+except JSONDecodeError as exception:
+    config_error = bool(True)
 
 global default_prefix
 default_prefix = '!'
 
-def auth_owner(config, context):
+def auth_owner(config, context): # Subprogram to authenticate owner as message author
     owner_username = config['owner']['username']
     owner_discriminator = config['owner']['discriminator']
 
     author_username = context.author.username
     author_discrim = context.author.discriminator
-
-    if owner_username == author_username and owner_discriminator == author_discrim:
-        owner = True
+    
+    if config_error != True:
+        if owner_username == author_username and owner_discriminator == author_discrim:
+            owner = True
+        else:
+            owner = False
+        return bool(owner)
     else:
-        owner = False
-    return bool(owner)
+        context.send('Error in configuration file. Unable to validate owner.')
 
 def get_prefix(client, message): # Per server prefixes
     with open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'r') as prefix_file:
@@ -104,7 +112,7 @@ async def reload (ctx):
             except:
                 await ctx.send(f'Failed to restart {cog_name}.')
     else:
-        print('Only the owner can use this command. If you are the owner, edit the values in config.json')
+        await('Only the owner can use this command. If you are the owner, edit the values in config.json')
 
 if str(config['token']) == '':
     token = lc.getline('Media/token', 1)
