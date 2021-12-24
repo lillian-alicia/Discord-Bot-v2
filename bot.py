@@ -6,7 +6,7 @@ import os, json, random # Is os module required?
 import logging #TODO: Add command logging (user, channel, server, time)
 
 try:
-    config = json.load(open('Cogs/config.json', 'r'))
+    config = json.load(open('Cogs/config.json', 'r')) # Load config file, and report error if necessary
 except JSONDecodeError as exception:
     config_error = bool(True)
 
@@ -29,12 +29,12 @@ def auth_owner(config, context): # Subprogram to authenticate owner as message a
     else:
         context.send('Error in configuration file. Unable to validate owner.')
 
-def get_prefix(client, message): # Per server prefixes
+def get_prefix(client, message): # Load Per server prefix
     with open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'r') as prefix_file:
         prefixes = json.load(prefix_file)
     return prefixes[str(message.guild.id)]
 
-def random_status(): # Random playing status from txt file
+def random_status(): # Random playing status from Media/random_status.txt file
         for line in open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/random_status.txt', 'r').readlines():
             status_options = []
             status_options.append (str(line))
@@ -45,11 +45,11 @@ bot = commands.Bot(command_prefix = get_prefix) #create bot
 nest_asyncio.apply() # Prevents program not starting due to asyncio
 
 bot.load_extension('Cogs.admin')# Loading cogs
-bot.load_extension('Cogs.utility')
+bot.load_extension('Cogs.utility') # TODO: Only load cogs given in config file - possible error if cog does not exist
 bot.load_extension('Cogs.fun')
 
 @bot.event
-async def on_ready(): # Apply random status
+async def on_ready(): # Apply random status from text file
      chosen_status = random_status()
      await bot.change_presence(status=discord.Status.online)
      await bot.change_presence(activity=discord.Game(chosen_status))
@@ -114,7 +114,7 @@ async def reload (ctx):
     else:
         await('Only the owner can use this command. If you are the owner, edit the values in config.json')
 
-if str(config['token']) == '':
+if str(config['token']) == '': # If there is no token in config file, use token file
     token = lc.getline('Media/token', 1)
 else:
     token = str(config['token'])

@@ -7,7 +7,7 @@ class Utility(commands.Cog): # Setup bot
         self.bot = bot
     
     @commands.Cog.listener() # Welcome message
-    async def on_member_join(self, ctx, member : discord.Member):
+    async def on_member_join(self, ctx, member : discord.Member): #TODO: Editable welcome message in config file
         if ctx.system_channel:
             await ctx.system_channel.send(f'{member.display_name}#{member.discriminator} has joined. Welcome!')
             

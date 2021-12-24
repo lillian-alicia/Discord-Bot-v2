@@ -5,7 +5,7 @@ class Fun(commands.Cog): # Setup bot
     def __init__ (self, bot):
         self.bot = bot
     
-    @commands.command() # Random.randint (possibly broken)
+    @commands.command() #FIXME: Possibly broken - testing required
     async def random(self, ctx, mode, *, params):
         if mode == 'number':
             params_split = params.split()
