@@ -10,7 +10,9 @@
 
     "token" : "",
 
-    "comment" : "Put your token and cogs to load above."
+    "comment" : "Put your token and cogs to load above.",
+    
+    "permissions" : "532643970112"
 
 
 }
