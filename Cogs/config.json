@@ -6,13 +6,24 @@
         "comment" : "Put your username and tag above."
     },
 
-    "cogs" : ["admin", "fun", "utility"],
+    "settings" : {
+        "cogs" : ["admin", "fun", "utility"],
+        "token" : "",
 
-    "token" : "",
+        "comment" : "Put your token and cogs to load above.",
 
-    "comment" : "Put your token and cogs to load above.",
-    
-    "permissions" : "532643970112"
+        "status" : ""
+    },
 
+    "invite" : {
+        "permissions" : "532643970112",
+        "enable" : "True"
+    },
+
+    "custom_prefix" : {
+        "default" : "!",
+        "comment" : "Put the default prefix above.",
+        "enable" : "True"
+    }
 
 }
