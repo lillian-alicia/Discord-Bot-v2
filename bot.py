@@ -1,24 +1,40 @@
 from json.decoder import JSONDecodeError
 import discord, nest_asyncio, requests
+from discord.ext.commands.errors import ExtensionFailed
 from discord import channel #FIXME: Add improved error handling @logging
 from discord.ext import commands, tasks
 import linecache as lc
-import os, json, random # Is os module required?
+import os, json, random, datetime # Is os module required?
 import logging #TODO: Add command logging (user, channel, server, time)
 
+logger_discord = logging.getLogger('discord') # Create logger for discord related messages
+logger_discord.setLevel(logging.INFO)
+handler_discord = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+handler_discord.setFormatter(logging.Formatter('%(levelname)s %(asctime)s - %(message)s', datefmt='%d-%b-%Y %H:%M:%S'))
+logger_discord.addHandler(handler_discord)
+time = str(datetime.datetime.now().strftime('%d-%m-%y-%H:%M'))
+logger_discord.info(f"Log created at {time}")
+
+logger_client = logging.getLogger('client') # Create logger for custom messages
+logger_client.setLevel(logging.INFO)
+handler_client = logging.FileHandler(filename='client.log', encoding='utf-8', mode='w')
+handler_client.setFormatter(logging.Formatter('%(levelname)s %(asctime)s - %(message)s', datefmt='%d-%b-%Y %H:%M:%S'))
+logger_client.addHandler(handler_client)
+time = str(datetime.datetime.now().strftime('%d-%m-%y-%H:%M'))
+logger_client.info(f"Log created at {time}")
 class ConfigError(Exception):
     '''Error in provided config file.'''
     # TODO: Log errors in config file @logging
 
-try:
-    config = json.load(open('Cogs/config.json', 'r')) # Load config file, and report error if necessary
+try: # Load config file, and report error if necessary
+    config = json.load(open('Cogs/config.json', 'r'))
 except JSONDecodeError as exception:
     config_error = bool(True)
     raise ConfigError('Unable to parse config file')
 
 
 global default_prefix
-if config['custom_prefix']['default'] == '':
+if config['custom_prefix']['default'] == '': # Load prefix from config file
     default_prefix = '!'
 else:
     default_prefix = str(config['custom_prefix']['default'])
@@ -27,7 +43,7 @@ def auth_owner(config, context): # Subprogram to authenticate owner as message a
     owner_username = config['owner']['username']
     owner_discriminator = config['owner']['discriminator']
 
-    author_username = context.author.username
+    author_username = context.author.name
     author_discrim = context.author.discriminator
     
     try:
@@ -62,10 +78,17 @@ def random_status(): # Random playing status from Media/random_status.txt file
 
 bot = commands.Bot(command_prefix = get_prefix) #create bot
 nest_asyncio.apply() # Prevents program not starting due to asyncio
-
-bot.load_extension('Cogs.admin')# Loading cogs
-bot.load_extension('Cogs.utility') # TODO: Only load cogs given in config file - possible error if cog does not exist
-bot.load_extension('Cogs.fun')
+loaded_cogs = []
+for cog in config['settings']['cogs']:
+    try:
+        bot.load_extension(f"Cogs.{cog}")
+        loaded_cogs.append(cog)
+    except:
+        logger_client.warning(f"Failed to load Cogs.{cog}")
+        try:
+            raise ExtensionFailed
+        except ExtensionFailed as e:
+            logger_client.exception("An Error has occured")
 
 @bot.event
 async def on_ready(): # Apply random status from text file unless a specific status is set
@@ -76,19 +99,33 @@ async def on_ready(): # Apply random status from text file unless a specific sta
         chosen_status = config['settings']['status']
     await bot.change_presence(status=discord.Status.online)
     await bot.change_presence(activity=discord.Game(chosen_status))
-    print('Bot is Online!')
+    print('Bot is Online!')        
 
+    logger_client.info(f'''
+    ----- Begin Startup Message ----- 
+Status: Playing {str(chosen_status)}
+Loaded Cogs: {loaded_cogs}
+Custom Prefixes Enabled: {bool(config['custom_prefix']['enable'])}
+    Default Prefix : {config['custom_prefix']['default']}
+Invite Enabled: {bool(config['invite']['enable'])}
+    Permissions Integer: {config['invite']['permissions']}
+Owner: {config['owner']['username']}#{config['owner']['discriminator']}
+    ----- End Startup Message -----
+''')
 @bot.command() # Enable chosen cogs
 async def load_cog (ctx, cog_name):
 
     owner = bool(auth_owner(config, ctx))
     
     if owner == True:
+        logger_client.info(f"{cog_name} loaded by owner.")
         try:
+            loaded_cogs.append(cog_name)
             bot.load_extension(f'Cogs.{cog_name}')
             await ctx.send(f'Loaded {cog_name}!')
         except:
             await ctx.send(f'Failed to load {cog_name}.')
+            logger_client.warning(f"Failed to load {cog_name}.")
     else:
         print('Only the owner can use this command. If you are the owner, edit the values in config.json')
 
@@ -96,34 +133,45 @@ async def load_cog (ctx, cog_name):
 async def unload_cog (ctx, cog_name):
       owner = bool(auth_owner(config, ctx))
       if owner == True:
+        logger_client.info(f"{cog_name} unloaded by owner.")
         try:
             bot.unload_extension(f'Cogs.{cog_name}')
+            loaded_cogs.remove(cog_name)
             await ctx.send(f'Unloaded {cog_name}!')
         except:
             await ctx.send(f'Failed to unload {cog_name}.')
+            logger_client.warning(f"Failed to unload {cog_name}")
       else:
-          print('Only the owner can use this command. If you are the owner, edit the values in config.json')
+          print('Only the owner can use this command. This event will be logged. If you are the owner, edit the values in config.json')
+          logger_client.info(f"{ctx.author.name}{ctx.author.discriminator} attempted to use an admin command.")
 
 @bot.command() # Reload all cogs - update code without restarting bot
 async def reload (ctx):
     owner = bool(auth_owner(config, ctx))
     if owner == True:
+        logger_client.info("All cogs reloaded by owner")
         try:
             for i in range(0, len(config['settings']['cogs'])):
                 cog_name = config['settings']['cogs'][i]
                 try:
                     bot.reload_extension(f'Cogs.{cog_name}')
                 except: # Failed to load specific cog
-                    await ctx.send(f'Failed to restart {cog_name}.')
+                    await ctx.send(f'Failed to restart {cog_name}. The error has been logged.')
+                    logger_client.warning(f"Failed to reload {cog_name}.")
+                    loaded_cogs.remove(cog_name)
+
+
         except: # Failed to read config file
             try:
                 raise ConfigError('Failed to find enabled cogs in config file.')
-                #TODO: Log error @logging
             except ConfigError as ex:
                 print(ex)
+                logging.exception("Warning - Error in configuration file.")
 
     else:
-        await('Only the owner can use this command. If you are the owner, edit the values in config.json')
+        await ctx.send('Only the owner can use this command. This event will be logged. If you are the owner, edit the values in config.json')
+        logger_client.info(f"{ctx.author.name}{ctx.author.discriminator} attempted to use an admin command.")
+
 
 if str(config['settings']['token']) == '': # If there is no token in config file, use token file
     token = lc.getline('Media/token', 1)
@@ -133,8 +181,8 @@ else:
     except:
         try:
             raise ConfigError('No token provided in config or token file.')
-            #TODO: Log error @logging
         except ConfigError as ex:
             print(ex)
+            logger_client.exception("Warning - Exception Occured")
 
 bot.run(token)

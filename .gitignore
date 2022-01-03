@@ -4,3 +4,4 @@ Cogs/template.py
 Media/prefixes.json
 TODO
 .vscode
+*.log
