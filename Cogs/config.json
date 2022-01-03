@@ -7,7 +7,7 @@
     },
 
     "settings" : {
-        "cogs" : ["admin", "fun", "utility"],
+        "cogs" : ["admin", "fun", "utility", "custom_prefix"],
         "token" : "",
 
         "comment" : "Put your token and cogs to load above.",

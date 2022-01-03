@@ -19,10 +19,13 @@ class custom_prefix(commands.Cog): # Setup bot
         raise ConfigError('Unable to parse config file')
 
     global default_prefix
-    if config['custom_prefix']['default'] == '':
+    try:
+        if config['custom_prefix']['default'] == '':
+            default_prefix = '!'
+        else:
+            default_prefix = str(config['custom_prefix']['default'])
+    except:
         default_prefix = '!'
-    else:
-        default_prefix = str(config['custom_prefix']['default'])
 
 
     @commands.command() # Change custom prefix
@@ -37,7 +40,7 @@ class custom_prefix(commands.Cog): # Setup bot
                 json.dump(prefixes, prefix_file, indent=4) # Write changed prefix to file
             await ctx.send(f'Changed prefix to "{custom_prefix}"')
     
-    @commands.Cog.listener
+    @commands.Cog.listener()
     async def on_guild_join(guild): # Default prefix = ' ! '
         with open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'r') as prefix_file:
             prefixes = json.load(prefix_file) # When the bot joins a server, save the default prefix in the
@@ -47,14 +50,14 @@ class custom_prefix(commands.Cog): # Setup bot
             json.dump(prefixes, prefix_file, indent=4)
 
 
-@commands.Cog.listener # Remove old servers from prefix file
-async def on_guild_remove(guild):
-    with open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'r') as prefix_file:
-        prefixes = json.load(prefix_file) # When leaving a server, remove its prefix from the file
-    prefixes.pop(str(guild.id))
+    @commands.Cog.listener() # Remove old servers from prefix file
+    async def on_guild_remove(guild):
+        with open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'r') as prefix_file:
+            prefixes = json.load(prefix_file) # When leaving a server, remove its prefix from the file
+        prefixes.pop(str(guild.id))
 
-    with open ('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'w') as prefix_file:
-        json.dump(prefixes, prefix_file, indent=4)
+        with open ('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'w') as prefix_file:
+            json.dump(prefixes, prefix_file, indent=4)
 
 
          
