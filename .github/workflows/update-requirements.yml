@@ -12,10 +12,11 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
-          
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
       - name: Update pip modules
         run: |
-            git clone https://github.com/Solarapollo05/Discord-Bot-v2 tmp
+            # git clone https://github.com/Solarapollo05/Discord-Bot-v2 tmp
             git config user.name "Automations Bot"
             git config user.email "bot@example.com"
             cd tmp
