@@ -15,7 +15,7 @@ jobs:
           
       - name: Update pip modules
         run: |
-            git clone ${{env.MY_REPO}} -b ${{env.MY_BRANCH}} tmp
+            git clone https://github.com/Solarapollo05/Discord-Bot-v2 tmp
             git config user.name "Automations Bot"
             git config user.email "bot@example.com"
             cd tmp
