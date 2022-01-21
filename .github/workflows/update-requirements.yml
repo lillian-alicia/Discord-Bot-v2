@@ -1,0 +1,32 @@
+on:
+  push:
+  workflow_dispatch:
+  
+  name: Update requirements.txt
+  
+ jobs:
+  update_requirements:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+    
+    name: Check for modified files
+      id: git-check
+        run: echo ::set-output name=modified::$(if [ -n "$(git status --porcelain)" ]; then echo "true"; else echo "false"; fi)
+        
+      if: steps.git-check.outputs.modified == 'true'   
+      run: |
+        git clone ${{env.MY_REPO}} -b ${{env.MY_BRANCH}} tmp
+                git config user.name "Automations Bot"
+                git config user.email "bot@example.com"
+                cd tmp
+                pip install -r .requirements.txt
+                pip install --upgrade -r requirements.txt
+                rm -rf .requirements.txt
+                pip freeze > .requirements.txt
+                
+                git add -A
+                git commit -m "Updated requirements file"
+                git push
