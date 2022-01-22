@@ -5,5 +5,5 @@ Media/prefixes.json
 TODO
 .vscode
 *.log
-.venv
-.venv/*
+.env
+.env/*
