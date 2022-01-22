@@ -20,8 +20,8 @@ jobs:
             git config user.email "bot@example.com"
             pip install -r Releases/requirements.txt
             pip install --upgrade -r Releases/requirements.txt
-            rm -rf .requirements.txt
-            pip freeze > .requirements.txt
+            rm -rf Releases/requirements.txt
+            pip freeze > Releases/requirements.txt
           
     
       - name: Check for modified files
