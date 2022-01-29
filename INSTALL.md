@@ -1,6 +1,6 @@
 ## Requirements
 ### Python 3.5.3 or later
-### Discord.py (by [@Rapptz](https://github.com/Rapptz/discord.py)
+### Discord.py (by [@Rapptz](https://github.com/Rapptz/discord.py))
 ###  PyNaCl for Voice Support (optional and currently not in use)
 
 
@@ -44,8 +44,35 @@ Extract the files (using ```unzip``` or ```tar -xf```) and then change to the di
   
  Install the other dependencies with pip:
  
- ``bash
- bash python -m pip install -r .requirements.txt
+ ```bash
+ python -m pip install -r .requirements.txt
  ```
 
-  
+ ### Running the Bot
+ The bot can either be run in normal mode or debug mode, which logs additional info.
+
+#### Running Normally:
+
+**Windows**
+```bash
+python bot.py {arguments}
+```
+
+
+**Linux**
+```bash 
+python3 bot.py {arguments}
+```
+
+#### Running in debug mode:
+
+**Windows**
+```bash
+python bot.py -d --debug
+```
+
+
+**Linux**
+```bash 
+python3 bot.py -d --debug
+```
