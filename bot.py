@@ -4,11 +4,19 @@ from discord.ext.commands.errors import ExtensionFailed
 from discord import channel #FIXME: Add improved error handling @logging
 from discord.ext import commands, tasks
 import linecache as lc
-import os, json, random, datetime # Is os module required?
+import sys, json, random, datetime
 import logging #TODO: Add command logging (user, channel, server, time)
 
+
 logger_discord = logging.getLogger('discord') # Create logger for discord related messages
-logger_discord.setLevel(logging.INFO)
+
+if len(sys.argv) > 1: # Set logging level to debug is program is run with -d or --debug option
+    if sys.argv[1] == '-d' or sys.argv[1] == '--debug':
+        logger_discord.setLevel(logging.DEBUG)
+        print("Debugging enabled.")
+else:
+    logger_discord.setLevel(logging.INFO)
+
 handler_discord = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 handler_discord.setFormatter(logging.Formatter('%(levelname)s %(asctime)s - %(message)s', datefmt='%d-%b-%Y %H:%M:%S'))
 logger_discord.addHandler(handler_discord)
