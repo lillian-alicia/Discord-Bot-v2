@@ -17,8 +17,11 @@ jobs:
 
       - name: Clear pre-installed pip modules
         run: |
-            pip freeze > remove.txt
-            python3 -m pip uninstall -r remove.txt -y
+            python3 -m venv env
+            source env/bin/activate
+            pip freeze > installed.txt
+            git add installed.txt
+            git commit -m "Listing installed modules in actions runners"
 
       - name: Update pip modules
         run: |
