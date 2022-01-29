@@ -2,10 +2,10 @@ name: Update requirements.txt
 
 on:
   push:
-  workflow_dispatch:
-  
+  workflow_dispatch:  
   
 jobs:
+
   update_requirements:
     runs-on: ubuntu-latest
     steps:
@@ -14,6 +14,12 @@ jobs:
           ref: ${{ github.head_ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
+
+      - name: Clear pre-installed pip modules
+        run: |
+            pip freeze > remove.txt
+            python3 -m pip uninstall -r remove.txt -y
+
       - name: Update pip modules
         run: |
             git config user.name "Automations Bot"
