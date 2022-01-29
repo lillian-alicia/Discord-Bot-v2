@@ -43,7 +43,8 @@ jobs:
         if: steps.git-check.outputs.modified == 'true'   
         run: |
            
-            
+           
+            rm -rf env
             git add -A
             git commit -m "Updated requirements file"
             git push
