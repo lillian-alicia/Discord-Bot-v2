@@ -18,7 +18,8 @@ on:
     # The branches below must be a subset of the branches above
     branches: [ master ]
   schedule:
-    - cron: '43 13 * * 6'
+    - cron: '00 00 * * 6'
+  workflow_dispatch:
 
 jobs:
   analyze:
