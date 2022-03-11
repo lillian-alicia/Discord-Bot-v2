@@ -7,6 +7,9 @@ import linecache as lc
 import sys, json, random, datetime
 import logging #TODO: Add command logging (user, channel, server, time)
 
+# --------------- Constants --------------- 
+CUSTOM_PREFIX = False
+CUSTOM_STATUS = False
 
 logger_discord = logging.getLogger('discord') # Create logger for discord related messages
 
@@ -16,6 +19,8 @@ if len(sys.argv) > 1: # Set logging level to debug is program is run with -d or 
         print("Debugging enabled.")
 else:
     logger_discord.setLevel(logging.INFO)
+
+# --------------- Logging setup --------------- 
 
 handler_discord = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 handler_discord.setFormatter(logging.Formatter('%(levelname)s %(asctime)s - %(message)s', datefmt='%d-%b-%Y %H:%M:%S'))
@@ -30,6 +35,9 @@ handler_client.setFormatter(logging.Formatter('%(levelname)s %(asctime)s - %(mes
 logger_client.addHandler(handler_client)
 time = str(datetime.datetime.now().strftime('%d-%m-%y-%H:%M'))
 logger_client.info(f"Log created at {time}")
+
+# --------------- Config File ---------------
+
 class ConfigError(Exception):
     '''Error in provided config file.'''
     # TODO: Log errors in config file @logging
@@ -46,6 +54,7 @@ if config['custom_prefix']['default'] == '': # Load prefix from config file
     default_prefix = '!'
 else:
     default_prefix = str(config['custom_prefix']['default'])
+    CUSTOM_PREFIX = True
 
 def auth_owner(config, context): # Subprogram to authenticate owner as message author
     owner_username = config['owner']['username']
@@ -105,8 +114,10 @@ async def on_ready(): # Apply random status from text file unless a specific sta
         
     else:
         chosen_status = config['settings']['status']
+        CUSTOM_STATUS = True
     await bot.change_presence(status=discord.Status.online)
     await bot.change_presence(activity=discord.Game(chosen_status))
+    change_status.start() # Start random status loop
     print('Bot is Online!')        
 
     logger_client.info(f'''
@@ -135,7 +146,7 @@ async def load_cog (ctx, cog_name):
             await ctx.send(f'Failed to load {cog_name}.')
             logger_client.warning(f"Failed to load {cog_name}.")
     else:
-        print('Only the owner can use this command. If you are the owner, edit the values in config.json')
+        await ctx.send('Only the owner can use this command. If you are the owner, edit the values in config.json')
 
 @bot.command() # Disable chosen cogs
 async def unload_cog (ctx, cog_name):
@@ -150,7 +161,7 @@ async def unload_cog (ctx, cog_name):
             await ctx.send(f'Failed to unload {cog_name}.')
             logger_client.warning(f"Failed to unload {cog_name}")
       else:
-          print('Only the owner can use this command. This event will be logged. If you are the owner, edit the values in config.json')
+          await ctx.send('Only the owner can use this command. This event will be logged. If you are the owner, edit the values in config.json')
           logger_client.info(f"{ctx.author.name}{ctx.author.discriminator} attempted to use an admin command.")
 
 @bot.command() # Reload all cogs - update code without restarting bot
@@ -192,5 +203,12 @@ else:
         except ConfigError as ex:
             print(ex)
             logger_client.exception("Warning - Exception Occured")
+
+@tasks.loop(minutes=30)
+async def change_status():
+    if CUSTOM_STATUS == False:
+        new_status = random_status()
+        await bot.change_presence(activity=discord.Game(new_status))
+        logger_client.info(f"Status updated to {new_status}")
 
 bot.run(token)
