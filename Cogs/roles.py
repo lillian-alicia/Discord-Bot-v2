@@ -22,7 +22,7 @@ class roles(commands.Cog): # Setup bot (replace template with suitable name)
 
     #
     @commands.command()
-    async def info(self, ctx, role : discord.Role): # FIXME: role varable is not discord.Role object pls fix
+    async def info(self, ctx, role : discord.Role):
         
         # role hex colour, number of users with role, role name, creation date, permission integer
         colour = discord.Colour.to_rgb(role.color) #(r, g, b)
@@ -40,7 +40,7 @@ class roles(commands.Cog): # Setup bot (replace template with suitable name)
             return out_str[0:(len(out_str)-1)]
                 
 
-        embed=discord.Embed(title=f"Role info for {role}", description=f"Info requested by {ctx.author}", color=colour_hex) # TODO: mention ctx.author
+        embed=discord.Embed(title=f"Role info for {role}", description=f"Info requested by {ctx.author}", color=colour_hex) # TODO: mention ctx.author FIXME: colour should not be given in str
         embed.set_author(name=discord.ClientUser.name())
         embed.add_field(name="Colour", value=f"{discord.Color.r()}, {discord.Color.g()}, {discord.Color.b()}    #{colour_hex}", inline=True)
         embed.add_field(name="Creation Date", value=creation_date, inline=True)
