@@ -22,24 +22,25 @@ class roles(commands.Cog): # Setup bot (replace template with suitable name)
 
     #
     @commands.command()
-    async def info(ctx, role : discord.role): # FIXME: role varable is not discord.Role object pls fix
+    async def info(self, ctx, role : discord.Role): # FIXME: role varable is not discord.Role object pls fix
         
         # role hex colour, number of users with role, role name, creation date, permission integer
-        colour = discord.Colour.to_rgb(role.Colour) #(r, g, b)
+        colour = discord.Colour.to_rgb(role.color) #(r, g, b)
         colour_hex = ('%02x%02x%02x' % colour)
-        creation_date = role.created_at()
+        creation_date = role.created_at
         members = role.members
         num_members = int(len(role.members))
-        permissions = str(role.permissions.value) #put something here to get perms int
+        permissions = role.permissions # Returns permissions as a Permissions object
+        # TODO: Write subprogram to handle permissions objects
 
         def format_members(members):
-            out_str = str("")
+            out_str = ""
             for member in members:
                 out_str = out_str + f"{member.display_name()}" + ", "
             return out_str[0:(len(out_str)-1)]
                 
 
-        embed=discord.Embed(title=f"Role info for {role.mention()}", description=f"Info requested by {ctx.author.mention()}", color=colour_hex)
+        embed=discord.Embed(title=f"Role info for {role}", description=f"Info requested by {ctx.author}", color=colour_hex) # TODO: mention ctx.author
         embed.set_author(name=discord.ClientUser.name())
         embed.add_field(name="Colour", value=f"{discord.Color.r()}, {discord.Color.g()}, {discord.Color.b()}    #{colour_hex}", inline=True)
         embed.add_field(name="Creation Date", value=creation_date, inline=True)

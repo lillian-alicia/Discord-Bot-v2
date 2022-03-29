@@ -179,7 +179,7 @@ async def reload (ctx):
                     logger_client.warning(f"Failed to reload {cog_name}.")
                     loaded_cogs.remove(cog_name)
 
-
+            await ctx.send("Cogs reloaded")
         except: # Failed to read config file
             try:
                 raise ConfigError('Failed to find enabled cogs in config file.')
