@@ -43,22 +43,22 @@ class ConfigError(Exception):
     # TODO: Log errors in config file @logging
 
 try: # Load config file, and report error if necessary
-    config = json.load(open('Cogs/config.json', 'r'))
+    CONFIG = json.load(open('Cogs/config.json', 'r'))
 except JSONDecodeError as exception:
     config_error = bool(True)
     raise ConfigError('Unable to parse config file')
 
 
 global default_prefix
-if config['custom_prefix']['default'] == '': # Load prefix from config file
+if CONFIG['custom_prefix']['default'] == '': # Load prefix from config file
     default_prefix = '!'
 else:
-    default_prefix = str(config['custom_prefix']['default'])
+    default_prefix = str(CONFIG['custom_prefix']['default'])
     CUSTOM_PREFIX = True
 
-def auth_owner(config, context): # Subprogram to authenticate owner as message author
-    owner_username = config['owner']['username']
-    owner_discriminator = config['owner']['discriminator']
+def auth_owner(CONFIG, context): # Subprogram to authenticate owner as message author
+    owner_username = CONFIG['owner']['username']
+    owner_discriminator = CONFIG['owner']['discriminator']
 
     author_username = context.author.name
     author_discrim = context.author.discriminator
@@ -79,7 +79,7 @@ def auth_owner(config, context): # Subprogram to authenticate owner as message a
         return bool(False)
 
 def get_prefix(client, message): # Load Per server prefix
-    if bool(config['custom_prefix']['enable']) == True:
+    if bool(CONFIG['custom_prefix']['enable']) == True:
         with open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'r') as prefix_file:
             prefixes = json.load(prefix_file)
         return prefixes[str(message.guild.id)]
@@ -96,7 +96,7 @@ def random_status(): # Random playing status from Media/random_status.txt file
 bot = commands.Bot(command_prefix = get_prefix) #create bot
 nest_asyncio.apply() # Prevents program not starting due to asyncio
 loaded_cogs = []
-for cog in config['settings']['cogs']:
+for cog in CONFIG['settings']['cogs']:
     try:
         bot.load_extension(f"Cogs.{cog}")
         loaded_cogs.append(cog)
@@ -110,11 +110,11 @@ for cog in config['settings']['cogs']:
 
 @bot.event
 async def on_ready(): # Apply random status from text file unless a specific status is set
-    if config['settings']['status'] == '':
+    if CONFIG['settings']['status'] == '':
         chosen_status = random_status()
         
     else:
-        chosen_status = config['settings']['status']
+        chosen_status = CONFIG['settings']['status']
         CUSTOM_STATUS = True
     await bot.change_presence(status=discord.Status.online)
     await bot.change_presence(activity=discord.Game(chosen_status))
@@ -126,17 +126,17 @@ async def on_ready(): # Apply random status from text file unless a specific sta
     ----- Begin Startup Message ----- 
 Status: Playing {str(chosen_status)}
 Loaded Cogs: {loaded_cogs}
-Custom Prefixes Enabled: {bool(config['custom_prefix']['enable'])}
-    Default Prefix : {config['custom_prefix']['default']}
-Invite Enabled: {bool(config['invite']['enable'])}
-    Permissions Integer: {config['invite']['permissions']}
-Owner: {config['owner']['username']}#{config['owner']['discriminator']}
+Custom Prefixes Enabled: {bool(CONFIG['custom_prefix']['enable'])}
+    Default Prefix : {CONFIG['custom_prefix']['default']}
+Invite Enabled: {bool(CONFIG['invite']['enable'])}
+    Permissions Integer: {CONFIG['invite']['permissions']}
+Owner: {CONFIG['owner']['username']}#{CONFIG['owner']['discriminator']}
     ----- End Startup Message -----
 ''')
 @bot.command() # Enable chosen cogs
 async def load_cog (ctx, cog_name):
 
-    owner = bool(auth_owner(config, ctx))
+    owner = bool(auth_owner(CONFIG, ctx))
     
     if owner == True:
         logger_client.info(f"load {cog_name} requested by owner.")
@@ -157,7 +157,7 @@ async def load_cog (ctx, cog_name):
 
 @bot.command() # Disable chosen cogs
 async def unload_cog (ctx, cog_name):
-      owner = bool(auth_owner(config, ctx))
+      owner = bool(auth_owner(CONFIG, ctx))
       
       if owner == True:
         logger_client.info(f"unload {cog_name} requested by owner.")
@@ -180,12 +180,12 @@ async def unload_cog (ctx, cog_name):
 
 @bot.command() # Reload all cogs - update code without restarting bot
 async def reload (ctx):
-    owner = bool(auth_owner(config, ctx))
+    owner = bool(auth_owner(CONFIG, ctx))
     if owner == True:
         logger_client.info("Attemting to  reload all cogs")
         try:
-            for i in range(0, len(config['settings']['cogs'])):
-                cog_name = config['settings']['cogs'][i]
+            for i in range(0, len(CONFIG['settings']['cogs'])):
+                cog_name = CONFIG['settings']['cogs'][i]
                 try:
                     bot.reload_extension(f'Cogs.{cog_name}')
                 except: # Failed to load specific cog
@@ -211,11 +211,11 @@ async def reload (ctx):
         logger_client.info(f"{ctx.author.name}{ctx.author.discriminator} attempted to use an admin command.")
 
 
-if str(config['settings']['token']) == '': # If there is no token in config file, use token file
+if str(CONFIG['settings']['token']) == '': # If there is no token in config file, use token file
     token = lc.getline('Media/token', 1)
 else:
     try:
-        token = str(config['settings']['token'])
+        token = str(CONFIG['settings']['token'])
     except:
         try:
             raise ConfigError('No token provided in config or token file.')
