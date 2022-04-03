@@ -97,6 +97,7 @@ def random_status(): # Random playing status from Media/random_status.txt file
 bot = commands.Bot(command_prefix = get_prefix) #create bot
 nest_asyncio.apply() # Prevents program not starting due to asyncio
 loaded_cogs = []
+
 for cog in CONFIG['settings']['cogs']: #TODO use try and except to catch errors @logging
     try:
         bot.load_extension(f"Cogs.{cog}")
@@ -109,6 +110,7 @@ for cog in CONFIG['settings']['cogs']: #TODO use try and except to catch errors 
         except ExtensionFailed as e:
             logger_client.exception(f"An Error has occured\n{e}")
 
+
 @bot.event
 async def on_ready(): # Apply random status from text file unless a specific status is set
     if CONFIG['settings']['status'] == '':
@@ -120,6 +122,7 @@ async def on_ready(): # Apply random status from text file unless a specific sta
     await bot.change_presence(status=discord.Status.online)
     await bot.change_presence(activity=discord.Game(chosen_status))
     change_status.start() # Start random status loop
+
     print("Bot is Online!")
     logger_client.info('Bot is Online!')        
 
@@ -159,6 +162,7 @@ async def load_cog (ctx, cog_name):
 @bot.command() # Disable chosen cogs
 async def unload_cog (ctx, cog_name):
       owner = bool(auth_owner(CONFIG, ctx))
+
       if owner == True:
         logger_client.info(f"unload {cog_name} requested by owner.")
         try:
@@ -168,10 +172,12 @@ async def unload_cog (ctx, cog_name):
         except:
             await ctx.send(f'Failed to unload {cog_name}.')
             logger_client.warning(f"Failed to unload {cog_name}")
+
             try:
                 raise ExtensionFailed(cog_name, BaseException) # Report error
             except ExtensionFailed as e:
                 logger_client.exception(f"An Error has occured:\n{e}")
+
       else:
           await ctx.send('Only the owner can use this command. This event will be logged. If you are the owner, edit the values in config.json')
           logger_client.info(f"{ctx.author.name}{ctx.author.discriminator} attempted to use an admin command.")
@@ -180,7 +186,7 @@ async def unload_cog (ctx, cog_name):
 async def reload (ctx):
     owner = bool(auth_owner(CONFIG, ctx))
     if owner == True:
-        logger_client.info("All cogs reloaded by owner")
+        logger_client.info("Attemting to  reload all cogs")
         try:
             for i in range(0, len(CONFIG['settings']['cogs'])):
                 cog_name = CONFIG['settings']['cogs'][i]
@@ -191,15 +197,17 @@ async def reload (ctx):
                     logger_client.warning(f"Failed to reload {cog_name}.")
                     loaded_cogs.remove(cog_name)
 
+
                     try:
                         raise ExtensionFailed(cog_name, BaseException) # Report error - need to pass params to exception
                     except ExtensionFailed as e:
                         logger_client.exception(f"An Error has occured:\n{e}")
 
-
+            await ctx.send("Cogs reloaded")
         except: # Failed to read config file
             try:
                 raise ConfigError('Failed to find enabled cogs in config file.')
+
             except ConfigError as e:
                 
                 logging.exception(f"An error has occured in the configuration file:\n{e}")
@@ -220,7 +228,7 @@ else:
             raise ConfigError('No token provided in config or token file.')
         except ConfigError as ex:
             print(ex)
-            logger_client.exception("Warning - Exception Occured")
+            logger_client.exception(f"Warning - Exception Occured:\n{ex}")
 
 @tasks.loop(minutes=30)
 async def change_status():
