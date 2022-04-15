@@ -11,7 +11,6 @@ class Reactions(commands.Cog):
     @commands.bot_has_permissions(manage_messages=True)
 
     async def on_reaction_add(self, reaction:discord.Reaction, user:discord.Member|discord.User):
-        print(reaction.emoji)
         if discord.ext.commands.has_permissions(manage_messages = True): # If user can pin and delete messages:
             if reaction.emoji == "📌":
                 try:
@@ -20,7 +19,7 @@ class Reactions(commands.Cog):
                 except discord.Forbidden:
                     await reaction.message.reply("Something went wrong. Do I have the `manage_messages` permission?")
 
-            elif reaction.emoji == "🗑": # TODO: Put bin emoji here
+            elif reaction.emoji == "U\1F5D1000": # FIXME: Currently broken on windows 8.1 as it does not recoginse this emoji
                 await reaction.message.delete()
     
     @commands.Cog.listener()
