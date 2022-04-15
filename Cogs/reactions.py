@@ -8,20 +8,25 @@ class Reactions(commands.Cog):
 
 
     @commands.Cog.listener()
-    @commands.bot_has_permissions(perms=discord.Permissions.manage_messages)
+    @commands.bot_has_permissions(manage_messages=True)
 
-    async def on_reaction_add(self, ctx, reaction:discord.Reaction, user:discord.Member|discord.User):
-        if user.Permissions.manage_messages == True: # If user can pin and delete messages:
-            if reaction.emoji == "": # TODO: Put pin emoji here
-                await reaction.message.pin(reason=f"Message pinned by {user.name}#{user.discriminator}")
+    async def on_reaction_add(self, reaction:discord.Reaction, user:discord.Member|discord.User):
+        print(reaction.emoji)
+        if discord.ext.commands.has_permissions(manage_messages = True): # If user can pin and delete messages:
+            if reaction.emoji == "📌":
+                try:
+                    await reaction.message.pin(reason=f"Message pinned by {user.name}#{user.discriminator}")
+                    await reaction.message.reply(f"Message pinned by {user.mention}")
+                except discord.Forbidden:
+                    await reaction.message.reply("Something went wrong. Do I have the `manage_messages` permission?")
 
-            elif reaction.emoji == "": # TODO: Put bin emoji here
+            elif reaction.emoji == "🗑": # TODO: Put bin emoji here
                 await reaction.message.delete()
     
     @commands.Cog.listener()
-    @commands.bot_has_permissions(perms=discord.Permissions.manage_messages)
+    @commands.bot_has_permissions(manage_messages=True)
     async def on_reaction_clear_emoji(self, reaction:discord.Reaction):
-            if reaction.emoji == "" and reaction.message.pinned == True: # TODO: Put pin emoji here
+            if reaction.emoji == "📌" and reaction.message.pinned == True: # TODO: Put pin emoji here
                 await reaction.message.unpin(reason=f"Message unpinned due to all pin emojis removed")   
 
 
