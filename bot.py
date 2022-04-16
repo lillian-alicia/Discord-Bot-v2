@@ -93,7 +93,8 @@ def random_status(): # Random playing status from Media/random_status.txt file
         chosen_status = random.choice(status_options)
         return chosen_status
 
-bot = commands.Bot(command_prefix = get_prefix) #create bot
+intents = discord.Intents.all()
+bot = commands.Bot(command_prefix = get_prefix, intents=intents) #create bot with all intents (allows access to guild info)
 nest_asyncio.apply() # Prevents program not starting due to asyncio
 loaded_cogs = []
 for cog in config['settings']['cogs']:
