@@ -1,11 +1,11 @@
 from aifc import Error
 from json.decoder import JSONDecodeError
-import discord, nest_asyncio, requests
+import discord, nest_asyncio
 from discord.ext.commands.errors import ExtensionFailed
-from discord import channel #FIXME: Add improved error handling @logging
+#FIXME: Add improved error handling @logging
 from discord.ext import commands, tasks
 import linecache as lc
-import sys, json, random, datetime
+import sys, json, random, datetime, time
 import logging #TODO: Add command logging (user, channel, server, time)
 
 # --------------- Constants --------------- 
@@ -26,7 +26,7 @@ else:
 handler_discord = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 handler_discord.setFormatter(logging.Formatter('%(levelname)s %(asctime)s - %(message)s', datefmt='%d-%b-%Y %H:%M:%S'))
 logger_discord.addHandler(handler_discord)
-time = str(datetime.datetime.now().strftime('%d-%m-%y-%H:%M'))
+timestamp = str(datetime.datetime.now().strftime('%d-%m-%y-%H:%M'))
 logger_discord.info(f"Log created at {time}")
 
 logger_client = logging.getLogger('client') # Create logger for custom messages
@@ -34,7 +34,7 @@ logger_client.setLevel(logging.INFO)
 handler_client = logging.FileHandler(filename='client.log', encoding='utf-8', mode='w')
 handler_client.setFormatter(logging.Formatter('%(levelname)s %(asctime)s - %(message)s', datefmt='%d-%b-%Y %H:%M:%S'))
 logger_client.addHandler(handler_client)
-time = str(datetime.datetime.now().strftime('%d-%m-%y-%H:%M'))
+timestamp = str(datetime.datetime.now().strftime('%d-%m-%y-%H:%M'))
 logger_client.info(f"Log created at {time}")
 
 # --------------- Config File ---------------
@@ -123,8 +123,9 @@ async def on_ready(): # Apply random status from text file unless a specific sta
     await bot.change_presence(activity=discord.Game(chosen_status))
     change_status.start() # Start random status loop
 
-    print("Bot is Online!")
-    logger_client.info('Bot is Online!')        
+    print('Bot is Online!')
+    global START_TIME
+    START_TIME = time.time()
 
     logger_client.info(f'''
     ----- Begin Startup Message ----- 
@@ -138,18 +139,21 @@ Owner: {CONFIG['owner']['username']}#{CONFIG['owner']['discriminator']}
     ----- End Startup Message -----
 ''')
 @bot.command() # Enable chosen cogs
-async def load_cog (ctx, cog_name):
+async def load (ctx, cog_name):
 
     owner = bool(auth_owner(CONFIG, ctx))
     
     if owner == True:
-        logger_client.info(f"load {cog_name} requested by owner.")
+
+        logger_client.info(f"{cog_name} loaded by owner.")
+
         try:
-            bot.load_extension(f'Cogs.{cog_name}')
-            await ctx.send(f'Loaded {cog_name}!')
+            bot.load_extension(f'Cogs.{cog_name}.py')
             loaded_cogs.append(cog_name)
+            await ctx.reply(f'Loaded `{cog_name}.py`')
+            
         except:
-            await ctx.send(f'Failed to load {cog_name}.')
+            await ctx.send(f'Failed to load `{cog_name}.py`')
             logger_client.warning(f"Failed to load {cog_name}.")
 
             try:
@@ -158,19 +162,20 @@ async def load_cog (ctx, cog_name):
                 logger_client.exception(f"An error has occured:\n{e}")
     else:
         await ctx.send('Only the owner can use this command. If you are the owner, edit the values in config.json')
+        logger_client.info(f"{ctx.author.name}{ctx.author.discriminator} attempted to use an admin command.")
 
 @bot.command() # Disable chosen cogs
-async def unload_cog (ctx, cog_name):
-      owner = bool(auth_owner(CONFIG, ctx))
 
+async def unload (ctx, cog_name):
+      owner = bool(auth_owner(config, ctx))
       if owner == True:
         logger_client.info(f"unload {cog_name} requested by owner.")
         try:
             bot.unload_extension(f'Cogs.{cog_name}')
             loaded_cogs.remove(cog_name)
-            await ctx.send(f'Unloaded {cog_name}!')
+            await ctx.reply(f'Unloaded `{cog_name}.py`')
         except:
-            await ctx.send(f'Failed to unload {cog_name}.')
+            await ctx.reply(f'Failed to unload `{cog_name}.py`.')
             logger_client.warning(f"Failed to unload {cog_name}")
 
             try:
@@ -216,6 +221,25 @@ async def reload (ctx):
     else:
         await ctx.send('Only the owner can use this command. This event will be logged. If you are the owner, edit the values in config.json')
         logger_client.info(f"{ctx.author.name}{ctx.author.discriminator} attempted to use an admin command.")
+
+@bot.command()
+async def status(ctx):
+    uptime = str(datetime.timedelta(seconds=int((round(time.time() - START_TIME)))))
+    cogs = ""
+    for cog in loaded_cogs:
+        cogs = f"`{cog}`,\n{cogs}"
+
+    with open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'r') as prefix_file:
+            prefixes = json.load(prefix_file)
+
+    server_prefix = f"`{prefixes[str(ctx.guild.id)]}`"
+
+    embed=discord.Embed(title="Current Status", description="*Current Status of the Discord Bot*", color=0xff0000)
+    embed.add_field(name="Uptime:", value=uptime, inline=False)
+    embed.add_field(name="Loaded Cogs:", value=cogs, inline=False)
+    embed.add_field(name="Server Prefix:", value=server_prefix, inline=False)
+    
+    await ctx.send(embed=embed)
 
 
 if str(CONFIG['settings']['token']) == '': # If there is no token in config file, use token file
