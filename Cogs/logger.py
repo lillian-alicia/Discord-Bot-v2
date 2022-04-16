@@ -10,7 +10,6 @@ class logger(commands.Cog): # Setup bot (replace template with suitable name)
         self.bot = bot
     class ConfigError(Exception):
         '''Error in provided config file.'''
-        # TODO: Log errors in config file @logging
 
     try:
         config = json.load(open('Cogs/config.json', 'r')) # Load config file, and report error if necessary
