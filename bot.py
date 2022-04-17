@@ -1,6 +1,4 @@
-from aifc import Error
-from json.decoder import JSONDecodeError
-import discord, nest_asyncio
+import discord
 from discord.ext.commands.errors import ExtensionFailed
 #FIXME: Add improved error handling @logging
 from discord.ext import commands, tasks
@@ -45,7 +43,7 @@ class ConfigError(Exception):
 
 try: # Load config file, and report error if necessary
     CONFIG = json.load(open('Cogs/config.json', 'r'))
-except JSONDecodeError as exception:
+except json.decoder.JSONDecodeError as exception:
     config_error = bool(True)
     raise ConfigError('Unable to parse config file')
 
@@ -95,7 +93,6 @@ def random_status(): # Random playing status from Media/random_status.txt file
         return chosen_status
 
 bot = commands.Bot(command_prefix = get_prefix) #create bot
-nest_asyncio.apply() # Prevents program not starting due to asyncio
 loaded_cogs = []
 
 for cog in CONFIG['settings']['cogs']: #TODO use try and except to catch errors @logging
