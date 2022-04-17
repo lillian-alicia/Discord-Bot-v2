@@ -1,0 +1,6 @@
+Cogs:
+- Cogs/*.py
+- Cogs/*.pyc
+
+Media:
+- Media/*

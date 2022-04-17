@@ -1,0 +1,4 @@
+Idea:
+Setup github codespace on raspberry pi (don't think that it can run on a Pi 0W, but maybe a 4b?)
+
+Allows me to edit discord bot and test run code, as well as host perminently

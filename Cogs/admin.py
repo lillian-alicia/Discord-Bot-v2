@@ -1,3 +1,4 @@
+from http.client import FORBIDDEN
 import discord, json
 from discord.ext import commands
 from json.decoder import JSONDecodeError
@@ -27,14 +28,24 @@ class Admin(commands.Cog): # Setup bot
             invite_link = 'https://discord.com/api/oauth2/authorize?client_id=811660589037650000&permissions={premissions_int}&scope=bot'
             await ctx.send(f'Invite me using: {invite_link}') # TODO: Allow disable invite command in config file
 
-#@commands.Cog.listener() '''  Auto-pin message, currently broken ''' FIXME
-#async def on_reaction_add(self, ctx, reaction, user):
-#    print (reaction.emoji)
-#    await bot.pin_message(reaction.message)
-#    if reaction.emoji == '📌':
-#        print('Pin Message')
-#        await ctx.pin_message(reaction.message)
-    
+
+    @commands.command()
+    async def clear(self, ctx, amount=5):
+        if discord.ext.commands.has_permissions(manage_messages = True):
+            
+            try:
+                await ctx.channel.purge(limit=amount)
+                await ctx.send(f"{ctx.message.author.mention} deleted {amount} messages.")
+            except Exception as e:
+                print(e)
+                if e == discord.ClientException:
+                    await ctx.reply("Error - Cannot delete more than 100 messages, or messages older than 14 days")
+                else:
+                    await ctx.reply("An error occured. Do I have the `manage_messages` permission?")
+
+        else:
+            await ctx.reply("You do not have the `manage_messages` permission")
+
 
     
 
