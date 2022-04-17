@@ -167,7 +167,7 @@ async def load (ctx, cog_name):
 @bot.command() # Disable chosen cogs
 
 async def unload (ctx, cog_name):
-      owner = bool(auth_owner(config, ctx))
+      owner = bool(auth_owner(CONFIG, ctx))
       if owner == True:
         logger_client.info(f"unload {cog_name} requested by owner.")
         try:
