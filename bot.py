@@ -79,14 +79,14 @@ def auth_owner(CONFIG, context): # Subprogram to authenticate owner as message a
 
 def get_prefix(client, message): # Load Per server prefix
     if bool(CONFIG['custom_prefix']['enable']) == True:
-        with open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'r') as prefix_file:
+        with open('Media/prefixes.json', 'r') as prefix_file:
             prefixes = json.load(prefix_file)
         return prefixes[str(message.guild.id)]
     else:
         return default_prefix
 
 def random_status(): # Random playing status from Media/random_status.txt file
-        for line in open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/random_status.txt', 'r').readlines():
+        for line in open('Media/random_status.txt', 'r').readlines():
             status_options = []
             status_options.append (str(line))
         chosen_status = random.choice(status_options)
@@ -226,7 +226,7 @@ async def status(ctx):
     for cog in loaded_cogs:
         cogs = f"`{cog}`,\n{cogs}"
 
-    with open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'r') as prefix_file:
+    with open('Media/prefixes.json', 'r') as prefix_file:
             prefixes = json.load(prefix_file)
 
     server_prefix = f"`{prefixes[str(ctx.guild.id)]}`"
