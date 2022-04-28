@@ -19,7 +19,7 @@ class Reactions(commands.Cog):
                 except discord.Forbidden:
                     await reaction.message.reply("Something went wrong. Do I have the `manage_messages` permission?")
 
-            elif reaction.emoji == "U\1F5D1000": # FIXME: Currently broken on windows 8.1 as it does not recoginse this emoji
+            elif reaction.emoji == "🗑️": # FIXME: Currently broken on windows 8.1 as it does not recoginse this emoji
                 await reaction.message.delete()
     
     @commands.Cog.listener()
