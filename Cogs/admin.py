@@ -27,16 +27,5 @@ class Admin(commands.Cog): # Setup bot
             invite_link = 'https://discord.com/api/oauth2/authorize?client_id=811660589037650000&permissions={premissions_int}&scope=bot'
             await ctx.send(f'Invite me using: {invite_link}') # TODO: Allow disable invite command in config file
 
-#@commands.Cog.listener() '''  Auto-pin message, currently broken ''' FIXME
-#async def on_reaction_add(self, ctx, reaction, user):
-#    print (reaction.emoji)
-#    await bot.pin_message(reaction.message)
-#    if reaction.emoji == '📌':
-#        print('Pin Message')
-#        await ctx.pin_message(reaction.message)
-    
-
-    
-
 def setup(bot):
     bot.add_cog(Admin(bot))

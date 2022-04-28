@@ -42,21 +42,21 @@ class custom_prefix(commands.Cog): # Setup bot
     
     @commands.Cog.listener()
     async def on_guild_join(guild): # Default prefix = ' ! '
-        with open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'r') as prefix_file:
+        with open('Media/prefixes.json', 'r') as prefix_file:
             prefixes = json.load(prefix_file) # When the bot joins a server, save the default prefix in the
         prefixes[str(guild.id)] = default_prefix      # prefixes.json file
 
-        with open ('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'w') as prefix_file:
+        with open ('Media/prefixes.json', 'w') as prefix_file:
             json.dump(prefixes, prefix_file, indent=4)
 
 
     @commands.Cog.listener() # Remove old servers from prefix file
     async def on_guild_remove(guild):
-        with open('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'r') as prefix_file:
+        with open('Media/prefixes.json', 'r') as prefix_file:
             prefixes = json.load(prefix_file) # When leaving a server, remove its prefix from the file
         prefixes.pop(str(guild.id))
 
-        with open ('C:/Users/R-J/OneDrive/Documents/Discord-Bot/Discord-Bot-v2/Media/prefixes.json', 'w') as prefix_file:
+        with open ('Media/prefixes.json', 'w') as prefix_file:
             json.dump(prefixes, prefix_file, indent=4)
 
 
