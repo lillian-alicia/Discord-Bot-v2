@@ -3,8 +3,10 @@ from discord.ext.commands.errors import ExtensionFailed
 #FIXME: Add improved error handling @logging
 from discord.ext import commands, tasks
 import linecache as lc
-import sys, json, random, datetime, time
+import sys, json, random, datetime, time, os
 import logging #TODO: Add command logging (user, channel, server, time)
+
+os.chdir(os.path.realpath(__file__)[0:-7]) # Change working directory to where this file is located
 
 # --------------- Constants --------------- 
 CUSTOM_PREFIX = False
