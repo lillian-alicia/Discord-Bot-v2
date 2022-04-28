@@ -27,7 +27,7 @@ class Fun(commands.Cog): # Setup bot
             await ctx.send(f'Picked  {random_result}.')
         
         else:
-            await ctx.send('Available options for random: number, choice')
+            await ctx.send('Available options for ```random```: number, choice')
 
 
 def setup(bot):
