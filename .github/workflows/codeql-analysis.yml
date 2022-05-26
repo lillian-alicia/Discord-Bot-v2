@@ -85,7 +85,7 @@ jobs:
 # ----- Automerge -----
 
   merge:
-    needs: analyse
+    needs: analyze
     name: Merge Changes to Live Branch 
     runs-on: ubuntu-latest
 
