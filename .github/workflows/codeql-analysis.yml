@@ -93,9 +93,9 @@ jobs:
       - name: Download code
         run: |
           git clone ${{env.REPO}} -b ${{env.COPY_TO}} tmp
-          cd tmp
       - name: Push to live branch
-        run: |    
+        run: |
+          cd tmp    
           git config user.name "Automerge Bot"
           git config user.email "bot@example.com"
           git config pull.rebase false
