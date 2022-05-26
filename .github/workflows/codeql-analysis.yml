@@ -11,6 +11,18 @@
 #
 name: "Analyse and Push Changes"
 
+env:
+  REPO: https://github_username:${{secrets.GITHUB_TOKEN}}@github.com/Solarapollo05/Discord-Bot-v2.git
+
+  # branch to copy changes to
+  COPY_TO: live
+
+  # link to repo to copy from
+  COPY_FROM: https://github.com/Solarapollo05/Revision.git
+
+  # branch to copy from
+  COPY_FROM_BRANCH: master
+
 on:
   push:
     branches: [ master ]
@@ -71,19 +83,6 @@ jobs:
       uses: github/codeql-action/analyze@v1
 
 # ----- Automerge -----
-
-env:
-  
-  REPO: https://github_username:${{secrets.GITHUB_TOKEN}}@github.com/Solarapollo05/Discord-Bot-v2.git
-
-  # branch to copy changes to
-  COPY_TO: live
-
-  # link to repo to copy from
-  COPY_FROM: https://github.com/Solarapollo05/Revision.git
-
-  # branch to copy from
-  COPY_FROM_BRANCH: master
 
   merge:
     needs: analyse
