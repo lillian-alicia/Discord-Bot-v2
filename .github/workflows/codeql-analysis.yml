@@ -9,7 +9,7 @@
 # the `language` matrix defined below to confirm you have the correct set of
 # supported CodeQL languages.
 #
-name: "CodeQL"
+name: "Analyse and Push Changes"
 
 on:
   push:
@@ -22,7 +22,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  analyze:
+  analyze: #----- CodeQL -----
     name: Analyze
     runs-on: ubuntu-latest
     permissions:
@@ -69,3 +69,35 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
+
+# ----- Automerge -----
+
+env:
+  
+  REPO: https://github_username:${{secrets.GITHUB_TOKEN}}@github.com/Solarapollo05/Discord-Bot-v2.git
+
+  # branch to copy changes to
+  COPY_TO: live
+
+  # link to repo to copy from
+  COPY_FROM: https://github.com/Solarapollo05/Revision.git
+
+  # branch to copy from
+  COPY_FROM_BRANCH: master
+
+    merge:
+    name: Merge Changes to Live Branch 
+      runs-on: ubuntu-latest
+
+      steps:
+      - name: Download code
+        run: |
+          git clone ${{env.REPO}} -b ${{env.COPY_TO}} tmp
+          cd tmp
+      - name: Push to live branch
+        run: |    
+          git config user.name "Automerge Bot"
+          git config user.email "bot@example.com"
+          git config pull.rebase false
+          git pull ${{env.COPY_FROM}} ${{env.COPY_FROM_BRANCH}}
+          git push
