@@ -73,7 +73,7 @@ sos==4.1
 ssh-import-id==5.10
 systemd-python==234
 testresources==2.0.1
-Twisted==18.9.0
+Twisted==24.7.0rc1
 typing-extensions==4.0.1
 ubuntu-advantage-tools==27.5
 ufw==0.36
